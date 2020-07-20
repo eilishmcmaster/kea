@@ -42,13 +42,4 @@ def qual_check(x, cluster_dict):
                 del combined_checkm[row['Bin Id']]
                 print(row['Bin Id'] + ' removed due to uncharacteristic completeness (contamination outside 1 standard deviation of the cluster mean)')
 
-
-        full_checkm_dict = {}
-        # calculate genome score for each MAG within the cluster
-        for mag, items in combined_checkm.items():
-            genome_score = items['Completeness'] - 5 * items['Contamination'] - 5 * (items['# contigs'] / 100) - 5 * (items['# ambiguous bases'] / 10000)
-            combined_checkm[mag]['Genome score'] = genome_score
-            print(mag, ' genome score: ', items['Genome score'])
-            full_checkm_dict[mag] = items['Genome score']
-
-    return full_checkm_dict
+        return combined_checkm

@@ -16,8 +16,8 @@ from kea_modular.nucmer import sort_n_nucmer
 def full_wf(output, input, x, t):
     input_click(input, output) #Make output directories, process input files
     cluster_dict = clustering(t,x) #Make OTU clusters of input files with ANI >99%
-    full_checkm_dict = qual_check(x, cluster_dict) #Quality check using CheckM and removing low quality MAGs
-    sort_n_nucmer(cluster_dict, full_checkm_dict,x) #Sorting MAGs by genome score, designating representative MAG and running nucmer
+    combined_checkm = qual_check(x, cluster_dict) #Quality check using CheckM and removing low quality MAGs
+    sort_n_nucmer(cluster_dict, combined_checkm,x) #Sorting MAGs by genome score, designating representative MAG and running nucmer
 
 
 if __name__ == "__main__":
