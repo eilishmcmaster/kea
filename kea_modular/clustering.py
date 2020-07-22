@@ -38,8 +38,6 @@ def clustering(t,x):
                 subprocess.Popen("ln -s %s %s/" % (genome, cluster), shell=True).wait()
             # running checkm on each cluster
             print('Quality check initated on  ' + str(cluster))
-            subprocess.Popen(
-                "checkm lineage_wf %s %s/checkm --reduced_tree --tab_table -t %d --pplacer_threads %d -x %s -q > %s/checkm.tsv" % (
-                cluster, cluster, t, t, x, cluster), shell=True).wait()
+            subprocess.Popen("checkm lineage_wf %s %s/checkm --reduced_tree --tab_table -t %d --pplacer_threads %d -x %s -q > %s/checkm.tsv" % (cluster, cluster, t, t, x, cluster), shell=True).wait()
 
     return cluster_dict

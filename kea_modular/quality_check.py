@@ -57,12 +57,14 @@ def qual_check(x, cluster_dict):
         # find the highest MAG (individually) and remove it from the dictionary
         rep_mag = max(full_checkm_dict.items(), key=operator.itemgetter(1))[0]
         print(rep_mag, ' has the highest genome score for cluster')
-        del sorted_dict[rep_mag]
+        print(sorted_dict)
 
         os.chdir(cluster)
         # use nucmer to compare representative mag to other mags in genome score order
         for mag in sorted_dict:
             subprocess.Popen("nucmer --prefix=%s %s %s --coords" % (rep_mag + '_vs_' + mag, rep_mag + '.' + x, mag + '.' + x), shell=True).wait()
             print(rep_mag + ' aligned with ' + mag + ' in ' + cluster)
-
+        subprocess.Popen("rm %s*" % (rep_mag + '_vs_' + mag), shell = True).wait()
         os.chdir('../')
+
+    return sorted_dict

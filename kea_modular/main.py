@@ -6,7 +6,6 @@ from kea_modular.input_processing import input_click
 from kea_modular.clustering import clustering
 from kea_modular.quality_check import qual_check
 from kea_modular.contig_lengths import contig_describe
-from kea_modular.nucmer_filtering import filtering
 
 
 @click.command()
@@ -18,10 +17,8 @@ from kea_modular.nucmer_filtering import filtering
 def full_wf(output, input, x, t):
     input_click(input, output) #Make output directories, process input files
     cluster_dict = clustering(t,x) #Make OTU clusters of input files with ANI >99%
-    qual_check(x, cluster_dict) #Quality check using CheckM, removing low quality MAGs, running nucmer
     contig_dict = contig_describe() #Find the contig lengths of the input MAGs to be used for filtering nucmer output
-    filtering(contig_dict) #Filter nucmer output to only include end matches
-
+    sorted_dict = qual_check(x, cluster_dict, contig_dict) #Quality check using CheckM, removing low quality MAGs, running nucmer
 
 if __name__ == "__main__":
     full_wf()
