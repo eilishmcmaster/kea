@@ -1,8 +1,9 @@
 import pandas as pd
 import json, subprocess, os
 import numpy as np
+from kea_modular.nucmer_interpreter import nucmer_interpreter
 
-def qual_check(x, cluster_dict):
+def nucmer(x, cluster_dict, contig_dict):
     for cluster in cluster_dict:
         #make dictionary for checkm.tsv
         col_list = ['Bin Id', 'Marker lineage', '# genomes', '# markers', '# marker sets', '0', '1', '2', '3', '4','5+', 'Completeness', 'Contamination', 'Strain heterogeneity']
@@ -53,6 +54,7 @@ def qual_check(x, cluster_dict):
         # sort MAGs by genome score
         import operator
         sorted_dict = dict(sorted(full_checkm_dict.items(), key=operator.itemgetter(1), reverse=True))
+        del sorted_dict[rep_mag]
 
         # find the highest MAG (individually) and remove it from the dictionary
         rep_mag = max(full_checkm_dict.items(), key=operator.itemgetter(1))[0]
@@ -64,7 +66,16 @@ def qual_check(x, cluster_dict):
         for mag in sorted_dict:
             subprocess.Popen("nucmer --prefix=%s %s %s --coords" % (rep_mag + '_vs_' + mag, rep_mag + '.' + x, mag + '.' + x), shell=True).wait()
             print(rep_mag + ' aligned with ' + mag + ' in ' + cluster)
-        subprocess.Popen("rm %s*" % (rep_mag + '_vs_' + mag), shell = True).wait()
+            subprocess.Popen('rm *delta', shell=True).wait()
+
+            nucmer_array = nucmer_interpreter(rep_mag, mag)
+            print(nucmer_array)
+
+        ###compare nucmer output with contig_dict entries
+        ###find the values for the rep MAG
+
+
+
         os.chdir('../')
 
-    return sorted_dict
+
