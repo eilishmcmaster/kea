@@ -8,7 +8,7 @@ def nucmer_interpreter(rep_mag, mag):
     base = os.path.splitext(coordfile)[0]
     os.rename(coordfile, base + '.csv')
 
-    colnames=['ref_start','mag_start','length_1','%_identity','ref_contig']
+    colnames=['ref_start','mag_start','length_1','identity','ref_contig']
     pd.set_option("display.max_rows", None, "display.max_columns", None, 'display.width', None, 'display.max_colwidth', -1)
     data = pd.read_csv(next(iglob('%s.csv' % (rep_mag + '_vs_' + mag))), sep='|', header=None, names=colnames)
 
@@ -20,5 +20,19 @@ def nucmer_interpreter(rep_mag, mag):
     data[['ref_start','ref_end']]=data['ref_start'].str.split(expand=True)
     data[['mag_start','mag_end']]=data['mag_start'].str.split(expand=True)
     data[['length_1','length_2']]=data['length_1'].str.split(expand=True)
+
+    # convert appropriate columns to integers
+    data["length_1"] = data["length_1"].astype(int)
+    data["length_2"] = data["length_2"].astype(int)
+    data["ref_start"] = data["ref_start"].astype(int)
+    data["mag_start"] = data["mag_start"].astype(int)
+    data["ref_end"] = data["ref_end"].astype(int)
+    data["mag_end"] = data["mag_end"].astype(int)
+    data["identity"] = data["identity"].astype(float)
+
+    # remove less good matches
+    data = data[data.length_1 > 100]
+    data = data[data.length_2 > 100]
+    data = data[data.identity > 97]
 
     return data

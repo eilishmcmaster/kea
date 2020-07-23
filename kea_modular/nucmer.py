@@ -54,12 +54,13 @@ def nucmer(x, cluster_dict, contig_dict):
         # sort MAGs by genome score
         import operator
         sorted_dict = dict(sorted(full_checkm_dict.items(), key=operator.itemgetter(1), reverse=True))
-        del sorted_dict[rep_mag]
+
 
         # find the highest MAG (individually) and remove it from the dictionary
         rep_mag = max(full_checkm_dict.items(), key=operator.itemgetter(1))[0]
         print(rep_mag, ' has the highest genome score for cluster')
         print(sorted_dict)
+        del sorted_dict[rep_mag]
 
         os.chdir(cluster)
         # use nucmer to compare representative mag to other mags in genome score order
@@ -68,8 +69,11 @@ def nucmer(x, cluster_dict, contig_dict):
             print(rep_mag + ' aligned with ' + mag + ' in ' + cluster)
             subprocess.Popen('rm *delta', shell=True).wait()
 
+            #nucmer array is the polished nucmer output with matches >100bp and identity >97% of rep mag vs other mag
             nucmer_array = nucmer_interpreter(rep_mag, mag)
             print(nucmer_array)
+
+
 
         ###compare nucmer output with contig_dict entries
         ###find the values for the rep MAG
