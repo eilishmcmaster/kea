@@ -2,6 +2,7 @@ import pandas as pd
 import json, subprocess, os
 import numpy as np
 from kea_modular.nucmer_interpreter import nucmer_interpreter
+from kea_modular.selecting_gap_overlaps import gap_overlap
 
 def nucmer(x, cluster_dict, contig_dict):
     for cluster in cluster_dict:
@@ -72,6 +73,8 @@ def nucmer(x, cluster_dict, contig_dict):
             #nucmer array is the polished nucmer output with matches >100bp and identity >97% of rep mag vs other mag
             nucmer_array = nucmer_interpreter(rep_mag, mag)
             print(nucmer_array)
+
+            gap_overlap(nucmer_array,contig_dict)
 
 
 

@@ -9,18 +9,16 @@ def contig_describe():
                 perl = subprocess.Popen(["perl", "../../kea_modular/describe_fasta.pl", mag], stdout=subprocess.PIPE)
                 perl_output = perl.communicate()[0].decode('UTF-8')
                 for line in perl_output:
-                    csvfile.write("%s" % line)
+                    if not line.startswith("Number"):
+                        csvfile.write("%s" % line)
 
-        # read in CSV we just made
-        col_list = ['Number', 'Name', 'Length']
-        perl_csv = pd.read_csv('contig_describe.csv', sep='\t', usecols=col_list)
-        perl_csv = perl_csv[perl_csv.Number != 'Number']
-        perl_csv = perl_csv.drop(['Number'], axis=1)
-
-        # makes dictionary that looks like {'SHRC1_26_bin_22_contig_968': ['8341'], 'SHRC1_26_bin_22_contig_9697': ['14596']}
-        contig_dict = perl_csv.applymap(str).groupby('Name')['Length'].apply(str).to_dict()
+    # read in CSV we just made
+    col_list = ['Number', 'Name', 'Length']
+    perl_csv = pd.read_csv('contig_describe.csv', sep='\t', names=col_list)
+    #perl_csv = perl_csv[perl_csv.Number != 'Number']
+    perl_csv = perl_csv.drop(['Number'], axis=1)
+    print(perl_csv.head)
+    # makes dictionary that looks like {'SHRC1_26_bin_22_contig_131': '8917', 'SHRC1_26_bin_22_contig_3877': '19855', 'SHRC1_26_bin_22_contig_5383': '29915', 'SHRC1_26_bin_22_contig_9668': '1271'}
+    contig_dict = perl_csv.set_index('Name').T.to_dict('int')
 
     return contig_dict
-
-
-
