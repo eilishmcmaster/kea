@@ -1,12 +1,12 @@
 import subprocess,os
-
+from datetime import datetime
 def clustering(t,x):
     #Find otu clusters with ANI >99%
     if not os.path.isfile('clusters.csv'):
-        print('Clustering initated')
+        print(datetime.now(), 'Clustering initated')
         subprocess.Popen("coverm cluster --genome-fasta-list input_mag_abs_path.tsv --genome-fasta-extension %s --threads %d > clusters.csv" % (x, t), shell=True).wait()
     else:
-        print('Cluster file already exists')
+        print(datetime.now(), 'Cluster file already exists')
 
     #Make dictionary of different clusters
     from collections import defaultdict
@@ -30,14 +30,14 @@ def clustering(t,x):
 
     for cluster in cluster_dict:
         if os.path.exists(cluster):
-            print('Cluster directory already exists')
+            print(datetime.now(), 'Cluster directory already exists')
         else:
             subprocess.Popen("mkdir %s" % cluster, shell=True).wait()
             genomes = cluster_dict[cluster]
             for genome in genomes:
                 subprocess.Popen("ln -s %s %s/" % (genome, cluster), shell=True).wait()
             # running checkm on each cluster
-            print('Quality check initated on  ' + str(cluster))
+            print(datetime.now(), 'Quality check initated on  ' + str(cluster))
             subprocess.Popen("checkm lineage_wf %s %s/checkm --reduced_tree --tab_table -t %d --pplacer_threads %d -x %s -q > %s/checkm.tsv" % (cluster, cluster, t, t, x, cluster), shell=True).wait()
 
     return cluster_dict

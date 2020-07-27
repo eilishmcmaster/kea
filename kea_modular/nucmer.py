@@ -3,9 +3,11 @@ import json, subprocess, os
 import numpy as np
 from kea_modular.nucmer_interpreter import nucmer_interpreter
 from kea_modular.selecting_gap_overlaps import gap_overlap
+from datetime import datetime
 
 def nucmer(x, cluster_dict, contig_dict):
     for cluster in cluster_dict:
+        print(datetime.now(), ' Making dictionary from checkM output for '+ cluster)
         #make dictionary for checkm.tsv
         col_list = ['Bin Id', 'Marker lineage', '# genomes', '# markers', '# marker sets', '0', '1', '2', '3', '4','5+', 'Completeness', 'Contamination', 'Strain heterogeneity']
         checkm_file = pd.read_csv("%s/checkm.tsv" % cluster, sep='\t', usecols=col_list)
@@ -34,6 +36,7 @@ def nucmer(x, cluster_dict, contig_dict):
         combined_checkm = always_merger.merge(checkm_tsv, checkm_qa)
 
         #remove bad quality MAGs from clusters
+        print(datetime.now(), ' Removing bad quality MAGs from ' + cluster)
         for index, row in checkm_file.iterrows():
             if row['Contamination'] >= 5:
                 subprocess.Popen("rm %s/%s.%s" % (cluster, row['Bin Id'], x), shell=True).wait()
@@ -46,6 +49,7 @@ def nucmer(x, cluster_dict, contig_dict):
 
         full_checkm_dict = {}
         # calculate genome score for each MAG within the cluster
+        print(datetime.now(), ' Calculating genome score for MAGs in ' + cluster)
         for mag, items in combined_checkm.items():
             genome_score = items['Completeness'] - 5 * items['Contamination'] - 5 * (items['# contigs'] / 100) - 5 * (items['# ambiguous bases'] / 10000)
             combined_checkm[mag]['Genome score'] = genome_score
@@ -59,7 +63,7 @@ def nucmer(x, cluster_dict, contig_dict):
 
         # find the highest MAG (individually) and remove it from the dictionary
         rep_mag = max(full_checkm_dict.items(), key=operator.itemgetter(1))[0]
-        print(rep_mag, ' has the highest genome score for cluster')
+        print(datetime.now(), rep_mag + ' has the highest genome score for cluster')
         print(sorted_dict)
         del sorted_dict[rep_mag]
 
@@ -67,14 +71,18 @@ def nucmer(x, cluster_dict, contig_dict):
         # use nucmer to compare representative mag to other mags in genome score order
         for mag in sorted_dict:
             subprocess.Popen("nucmer --prefix=%s %s %s --coords" % (rep_mag + '_vs_' + mag, rep_mag + '.' + x, mag + '.' + x), shell=True).wait()
-            print(rep_mag + ' aligned with ' + mag + ' in ' + cluster)
+            print(datetime.now(), rep_mag + ' aligned with ' + mag + ' in ' + cluster)
             subprocess.Popen('rm *delta', shell=True).wait()
 
             #nucmer array is the polished nucmer output with matches >100bp and identity >97% of rep mag vs other mag
+            print(datetime.now(), 'Interpreting nucmer output')
             nucmer_array = nucmer_interpreter(rep_mag, mag)
+            print('Nucmer array:')
             print(nucmer_array)
 
+            print(datetime.now(), 'Removing non-end alignments')
             filtered_nucmer = gap_overlap(nucmer_array,contig_dict)
+            print('Filtered nucmer array:')
             print(filtered_nucmer)
 
 

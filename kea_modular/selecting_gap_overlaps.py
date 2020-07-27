@@ -13,10 +13,7 @@ def gap_overlap(nucmer_array, contig_dict):
 
         if int(alignment['mag_start']) <=200 and int(alignment['ref_end']) >= ref_contig_length-200 or\
                 int(alignment['ref_start']) <= 200 and int(alignment['mag_end']) >= other_contig_length -200:
-            print('Alignment removed')
-            nucmer_array.remove(alignment)
-        else:
-            print('Alignment approved')
+            nucmer_array.drop(index)
     return nucmer_array
 
 
