@@ -34,5 +34,5 @@ def nucmer_interpreter(rep_mag, mag):
     data = data[data.length_1 > 100]
     data = data[data.length_2 > 100]
     data = data[data.identity > 97]
-
-    return data
+    nucmer_array=data
+    return nucmer_array

@@ -1,8 +1,22 @@
+import pandas as pd
+
+def gap_overlap(nucmer_array, contig_dict):
+    for index, alignment in nucmer_array.iterrows():
+        ref_contig = alignment['ref_contig']
+        ref_contig = str(ref_contig[1:])
+        ref_contig_length = contig_dict[ref_contig]['Length']
+        ref_contig_length = int(ref_contig_length)
+
+        other_contig = alignment['other_contig']
+        other_contig_length = contig_dict[other_contig]['Length']
+        other_contig_length = int(other_contig_length)
+
+        if int(alignment['mag_start']) <=200 and int(alignment['ref_end']) >= ref_contig_length-200 or\
+                int(alignment['ref_start']) <= 200 and int(alignment['mag_end']) >= other_contig_length -200:
+            print('Alignment removed')
+            nucmer_array.remove(alignment)
+        else:
+            print('Alignment approved')
+    return nucmer_array
 
 
-def gap_overlap(nucmer_array,contig_dict):
-    #nucmer array has all the nucmer alignments for the rep mag and other mag in the cluster with low length and identity removed
-    #contig dict has all of the contig lengths of all input files in it
-    for alignment in nucmer_array:
-        if nucmer_array.mag_start <= 200:
-            print(alignment)

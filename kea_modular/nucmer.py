@@ -74,13 +74,8 @@ def nucmer(x, cluster_dict, contig_dict):
             nucmer_array = nucmer_interpreter(rep_mag, mag)
             print(nucmer_array)
 
-            gap_overlap(nucmer_array,contig_dict)
-
-
-
-        ###compare nucmer output with contig_dict entries
-        ###find the values for the rep MAG
-
+            filtered_nucmer = gap_overlap(nucmer_array,contig_dict)
+            print(filtered_nucmer)
 
 
         os.chdir('../')
