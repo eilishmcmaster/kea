@@ -9,7 +9,7 @@ def nucmer_interpreter(rep_mag, mag):
     os.rename(coordfile, base + '.csv')
 
     colnames=['ref_start','mag_start','length_1','identity','ref_contig']
-    pd.set_option("display.max_rows", None, "display.max_columns", None, 'display.width', None, 'display.max_colwidth', -1)
+    pd.set_option("display.max_rows", None, "display.max_columns", None, 'display.width', None, 'display.max_colwidth', None)
     data = pd.read_csv(next(iglob('%s.csv' % (rep_mag + '_vs_' + mag))), sep='|', header=None, names=colnames)
 
     #remove the top junk lines

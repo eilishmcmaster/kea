@@ -41,11 +41,11 @@ def nucmer(x, cluster_dict, contig_dict):
             if row['Contamination'] >= 5:
                 subprocess.Popen("rm %s/%s.%s" % (cluster, row['Bin Id'], x), shell=True).wait()
                 del combined_checkm[row['Bin Id']]
-                print(str(row['Bin Id']) + ' removed due to high contamination (>=5%)')
+                print(datetime.now(), (row['Bin Id']) + ' removed due to high contamination (>=5%)')
             if row['Completeness'] > checkm_file['Completeness'].mean() + np.std(checkm_file['Completeness']) or row['Completeness'] < checkm_file['Completeness'].mean() - np.std(checkm_file['Completeness']):
                 subprocess.Popen("rm %s/%s.%s" % (cluster, row['Bin Id'], x), shell=True).wait()
                 del combined_checkm[row['Bin Id']]
-                print(row['Bin Id'] + ' removed due to uncharacteristic completeness (contamination outside 1 standard deviation of the cluster mean)')
+                print(datetime.now(), ['Bin Id'] + ' removed due to uncharacteristic completeness (contamination outside 1 standard deviation of the cluster mean)')
 
         full_checkm_dict = {}
         # calculate genome score for each MAG within the cluster
@@ -77,12 +77,12 @@ def nucmer(x, cluster_dict, contig_dict):
             #nucmer array is the polished nucmer output with matches >100bp and identity >97% of rep mag vs other mag
             print(datetime.now(), 'Interpreting nucmer output')
             nucmer_array = nucmer_interpreter(rep_mag, mag)
-            print('Nucmer array:')
+            print(datetime.now(), 'Nucmer array:')
             print(nucmer_array)
 
             print(datetime.now(), 'Removing non-end alignments')
             filtered_nucmer = gap_overlap(nucmer_array,contig_dict)
-            print('Filtered nucmer array:')
+            print(datetime.now(), 'Filtered nucmer array:')
             print(filtered_nucmer)
 
 
