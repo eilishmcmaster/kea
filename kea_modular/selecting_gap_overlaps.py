@@ -16,10 +16,12 @@ def gap_overlap(nucmer_array, contig_dict):
 
         #remove non-end matches
         if int(alignment['mag_start']) >=200 and int(alignment['ref_end']) <= ref_contig_length-200 or int(alignment['ref_start']) >= 200 and int(alignment['mag_end']) <= other_contig_length -200:
-            #if int(alignment['mag_start']) < int(alignment['mag_end']) and int(alignment['ref_start']) < int(alignment['ref_end']):
-            my_list = [alignment.ref_start, alignment.mag_start, alignment.length_1, alignment.identity, alignment.ref_contig, alignment.other_contig, alignment.ref_end, alignment.mag_end, alignment.length_2]
-            nucmer_filtered_list.append(my_list)
+            #remove reverse alignments
+            if int(alignment['mag_start']) < int(alignment['mag_end']) and int(alignment['ref_start']) < int(alignment['ref_end']):
+                my_list = [alignment.ref_start, alignment.mag_start, alignment.length_1, alignment.identity, alignment.ref_contig, alignment.other_contig, alignment.ref_end, alignment.mag_end, alignment.length_2]
+                nucmer_filtered_list.append(my_list)
 
     new_array = pd.DataFrame(nucmer_filtered_list, columns=col_names)
+    new_array = new_array[new_array.duplicated(subset=['other_contig'])]
     return new_array
 
