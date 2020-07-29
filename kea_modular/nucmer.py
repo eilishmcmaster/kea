@@ -3,6 +3,7 @@ import json, subprocess, os
 import numpy as np
 from kea_modular.nucmer_interpreter import nucmer_interpreter
 from kea_modular.selecting_gap_overlaps import gap_overlap
+from kea_modular.counting_duplicates import remove_dupes
 from datetime import datetime
 
 def nucmer(x, cluster_dict, contig_dict):
@@ -83,6 +84,10 @@ def nucmer(x, cluster_dict, contig_dict):
             print(datetime.now(), 'Removing non-end alignments')
             filtered_nucmer = gap_overlap(nucmer_array,contig_dict)
             print(datetime.now(), 'Filtered nucmer array:')
+            print(filtered_nucmer)
+
+            print(datetime.now(), 'Removing duplicates >2')
+            filtered_nucmer = remove_dupes(filtered_nucmer)
             print(filtered_nucmer)
 
 
