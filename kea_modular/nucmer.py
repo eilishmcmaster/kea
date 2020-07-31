@@ -4,6 +4,7 @@ import numpy as np
 from kea_modular.nucmer_interpreter import nucmer_interpreter
 from kea_modular.selecting_gap_overlaps import gap_overlap
 from kea_modular.counting_duplicates import remove_dupes
+from kea_modular.align_and_consensus import consensus_maker
 from datetime import datetime
 
 def nucmer(x, cluster_dict, contig_dict):
@@ -87,9 +88,10 @@ def nucmer(x, cluster_dict, contig_dict):
             print(filtered_nucmer)
 
             print(datetime.now(), 'Removing duplicates >2')
-            filtered_nucmer = remove_dupes(filtered_nucmer)
-            print(filtered_nucmer)
+            final_nucmer = remove_dupes(filtered_nucmer)
+            print(final_nucmer)
 
+            consensus_maker(final_nucmer, mag, rep_mag,x)
 
         os.chdir('../')
 
