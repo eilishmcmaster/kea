@@ -3,7 +3,7 @@ import json, subprocess, os
 import numpy as np
 from kea_modular.nucmer_interpreter import nucmer_interpreter
 from kea_modular.selecting_gap_overlaps import gap_overlap
-from kea_modular.counting_duplicates import remove_dupes
+from kea_modular.remove_duplicates import remove_dupes
 from kea_modular.align_and_consensus import consensus_maker
 from datetime import datetime
 
