@@ -34,6 +34,14 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
     ref_input = rep_mag + '.' + x
     other_input = mag + '.' + x
 
+
+#       contig 2 (ref1) (value[0])                                         contig 3 (ref2) (value[1])
+# ----------------------------|-------|                            |________|____________________________
+#                             |       |                            |        |
+#                             |_______|____________________________|________|
+#                                       contig 1 (other) (key)
+
+
     #going through dictionary one key at a time
     for key in new_other_list:
         for index, alignment in final_nucmer.iterrows():
@@ -51,6 +59,7 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
                     if rep_fasta.id == dict.get(key)[0]:
                         c2 = rep_fasta.seq  # sequence of first 'rep_contig' in value list
                         c2 = c2[c2s:c2e]  # section aligning with 'other' contig
+                        u2 = c2[:c2s] #unused part of contig 2
             if key == alignment['other_contig'] and dict.get(key)[1] == alignment['ref_contig'][1:]:
                 c1s2 = alignment['mag_start'] #contig 1 start 2 (other contig)
                 c1e2 = alignment['mag_end'] #contig 1 end 2
@@ -60,70 +69,28 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
                     if other_fasta.id == key:
                         c1 = other_fasta.seq  # sequence of the key 'other_contig'
                         c1_2 = c1[c1s2:c1e2]  # section of contig aligning with ref 2
+                        u1 = c1[c1e1:c1s2] #unused section of contig 1
                 for rep_fasta in SeqIO.parse(ref_input, 'fasta'):
                     if rep_fasta.id == dict.get(key)[1]:
                         c3 = rep_fasta.seq  # sequence of first 'rep_contig' in value list
                         c3 = c3[c3s:c3e]  # section aligning with 'other' contig
+                        u3 = c3[c3e:] #unused section of contig 3
 
         #alignment for each key thing and values set in the dictionary
-        from Bio import Align
-        from Bio.Align import AlignInfo
-        from Bio import AlignIO
-        aligner = Align.PairwiseAligner()
-        alignment_1 = aligner.align(c1_1, c2)
-        print(key, ' and ',dict.get(key)[0], ' alignment:', alignment_1)
-        alignment_1 = AlignIO.read(alignment_1)
-        align1_info = AlignInfo.SummaryInfo(alignment_1)
-        consensus_1 = align1_info.dumb_consensus()
-        print(key, ' and ',dict.get(key)[0], ' consensus:', consensus_1)
+        consensus_1 = ''
+        for i in range(len(c2)):
+            if c1_1[i] == c2[i]:
+                consensus_1 = consensus_1 + c1_1[i]
+            else:
+                consensus_1 = consensus_1 + 'N'
 
-    #
-    #         #works to return sequence of named contig
-    #         for other_fasta in SeqIO.parse(other_input, 'fasta'):
-    #             if other_fasta.id == key:
-    #                 c1 = other_fasta.seq #sequence of the key 'other_contig'
-    #                 c1_1 = c1[c1s1:c1e1] #section of contig aligning with ref 1
-    #                 c1_2 = c1[c1s2:c1e2] #section of contig aligning with ref 2
-    #                 print(c1, '\n', c1_1, '\n', c1_2)
-    #         for rep_fasta in SeqIO.parse(ref_input, 'fasta'):
-    #             if rep_fasta.id == dict.get(key)[0]:
-    #                 c2 = rep_fasta.seq #sequence of first 'rep_contig' in value list
-    #                 c2 = c2[c2s:c2e] #section aligning with 'other' contig
-    #             if rep_fasta.id == dict.get(key)[1]:
-    #                 c3 = rep_fasta.seq  # sequence of first 'rep_contig' in value list
-    #                 c3 = c3[c3s:c3e] #section aligning with 'other' contig
-    # #
+        consensus_2 = ''
+        for i in range(len(c3)):
+            if c1_2[i] == c3[i]:
+                consensus_2 = consensus_2 + c1_2[i]
+            else:
+                consensus_2 = consensus_2 + 'N'
 
+        final = u2 + consensus_1 + u1 + consensus_2 + u3
+        new_contig_name = str(rep_mag +'_gapclosed_' + str(len(final)))
 
-    #         #align
-    #         from Bio import Align
-    #         aligner = Align.PairwiseAligner()
-    #         alignment1 = aligner.align(c1_1, c2)
-    #         print('Alignment of other and ref1:', alignment1)
-
-            #
-            #      for index, alignment in final_nucmer.iterrows():
-            # if key == alignment['other_contig']:
-            #     print('dict key', key, ' and other contig ', alignment['other_contig'], 'match' )
-            # if dict.get(key)[0] == alignment['ref_contig'][1:]:
-            #     print('first ref alignment from dictionary ', dict.get(key)[0], ' and ', alignment['ref_contig'], 'match')
-
-    # if key == alignment['other_contig'] and dict.get(key)[0] == alignment['ref_contig'][
-    #                                                             1:]:  # this isnt finding anything
-    #     c1s1'] = int(alignment['mag_start'])  # contig 1 start 1 (other contig)
-    #     c1e1'] = int(alignment['mag_end'])  # contig 1 end 1
-    #     c2s'] = int(alignment['ref_start'])  # contig 2 start (first ref contig)
-    #     c2e'] = int(alignment['ref_end'])  # contig 2 end
-    # if key == alignment['other_contig'] and dict.get(key)[1] == alignment['ref_contig'][1:]:
-    #     c1s2'] = alignment['mag_start']  # contig 1 start 2 (other contig)
-    #     c1e2'] = alignment['mag_end']  # contig 1 end 2
-    #     c3s'] = alignment['ref_start']  # contig 3 end
-    #     c3e'] = alignment['ref_end']  # contig 3 end
-
-    # from Bio import pairwise2
-    # from Bio.Align import AlignInfo
-    # alignment_1 = pairwise2.align.globalms(c1_1, c2, 2, -1, -.5, -.1, one_alignment_only=True)
-    # print(key, ' and ', dict.get(key)[0], ' alignment:', alignment_1)
-    # align1_info = AlignInfo.SummaryInfo(alignment_1)
-    # consensus_1 = align1_info.dumb_consensus()
-    # print(key, ' and ', dict.get(key)[0], ' consensus:', consensus_1)
