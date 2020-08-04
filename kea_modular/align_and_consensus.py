@@ -5,7 +5,13 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
 
     #make nucmer outputs into dictionary with just contig names and what they align to
     global c1, c2, c1s1, c1e1, c1s2, c1e2, c2s, c2e, c3s, c3e, c1_1
-    ref_list = final_nucmer['ref_contig'].to_list()
+    bad_ref_list = final_nucmer['ref_contig'].to_list()
+    ref_list = []
+    for item in bad_ref_list:
+        ref_list.append(item[1:])
+    print('ref list before the bs:', ref_list)
+    death_list = list(ref_list)
+
     other_list = final_nucmer['other_contig'].to_list()
     #makes dictionary that looks like {'other': ['ref_1', 'ref_2']} == {'NODE_2767_length_14969_cov_5.423897': ['NODE_1302_length_24101_cov_6.015013', 'NODE_1392_length_23076_cov_6.991834']}
     dict = {}
@@ -13,13 +19,13 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
     new_contig_sequences = []
 
     for key in other_list:
-        for value in ref_list:
+        for value in death_list:
             if key not in dict:
-                dict[key]=[value[1:]]
-                ref_list.remove(value)
+                dict[key]=[value]
+                death_list.remove(value)
                 break
             else:
-                dict[key].append(value[1:])
+                dict[key].append(value)
                 break
 
     #this list has all of the 'other' contig names but without the duplicates
@@ -28,9 +34,6 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
     for key in other_list:
         if key not in new_other_list:
                 new_other_list.append(key)
-    print('Number of keys in dictionary: ',len(new_other_list))
-    print('This is the contig match dictionary:', dict)
-    print('This is the new list of other contigs:', new_other_list)
 
     #mag has 'other_contig's and rep_mag has 'ref_contig's
     #names of fasta files
@@ -111,16 +114,23 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
                 all_contigs_list.append(line[1:-1])
     unmodified_contig_names = list(set(all_contigs_list) - set(ref_list))  # this is a list with the contigs to write to the new fasta
     unmodified_contig_sequences = []
+    print('all contigs in original ref:', len(all_contigs_list))
+    print('contigs in unmodified contig list:', len(unmodified_contig_names))
+    print('theoretical number of new contigs: ', len(new_contig_names), ' or ', len(ref_list))
+    print('ref_list:', ref_list)
+    print('death ref list:', death_list)
+    print('unmodded names:',unmodified_contig_names)
+
     with open(ref_input, 'r') as original_ref:
         for line in original_ref:
-            for i in range(len(ref_list)):
-                if line.startswith('>' + ref_list[i]):
-                    unmodified_contig_sequences.append(str(next(original_fasta, '').strip()))
+            for i in range(len(unmodified_contig_names)):
+                if line.startswith('>' + unmodified_contig_names[i]):
+                    unmodified_contig_sequences.append(str(next(original_ref, '').strip()))
 
     new_fasta_name = 'improved_'+ rep_mag + '_using_' + other_input #makes improved_rep_using_other.fa
     with open(new_fasta_name, 'w') as new_fasta:
         for i in range(len(new_contig_names)):
-            new_fasta.write('>' + new_contig_names[i] + '\n' + new_contig_sequences[i] + '\n')
+            new_fasta.write(str('>' + new_contig_names[i] + '\n' + new_contig_sequences[i] + '\n'))
         for i in range(len(unmodified_contig_names)):
             new_fasta.write('>' + unmodified_contig_names[i]+ '\n' + unmodified_contig_sequences[i] + '\n' )  # write unused contigs -- all contigs in the original reference minus those in the ref_list
 
