@@ -1,4 +1,5 @@
 from Bio import SeqIO
+import os
 
 def consensus_maker(final_nucmer, mag, rep_mag, x):
 
@@ -8,6 +9,8 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
     other_list = final_nucmer['other_contig'].to_list()
     #makes dictionary that looks like {'other': ['ref_1', 'ref_2']} == {'NODE_2767_length_14969_cov_5.423897': ['NODE_1302_length_24101_cov_6.015013', 'NODE_1392_length_23076_cov_6.991834']}
     dict = {}
+    new_contig_names = []
+    new_contig_sequences = []
 
     for key in other_list:
         for value in ref_list:
@@ -91,6 +94,36 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
             else:
                 consensus_2 = consensus_2 + 'N'
 
+        #making the final sequence and adding it to the list
         final = u2 + consensus_1 + u1 + consensus_2 + u3
+        new_contig_sequences.append(final)
+        #making the final sequence name and adding it to the list
         new_contig_name = str(rep_mag +'_gapclosed_' + str(len(final)))
+        new_contig_names.append(new_contig_name)
+
+    #EXIT THE DICTIONARY LOOP
+
+    # make a list of the contigs to keep (contigs from the original ref mag without the used contig
+    all_contigs_list = []
+    with open(ref_input, 'r') as original_fasta:
+        for line in original_fasta:
+            if '>' in line:
+                all_contigs_list.append(line[1:-1])
+    unmodified_contig_names = list(set(all_contigs_list) - set(ref_list))  # this is a list with the contigs to write to the new fasta
+    unmodified_contig_sequences = []
+    with open(ref_input, 'r') as original_ref:
+        for line in original_ref:
+            for i in range(len(ref_list)):
+                if line.startswith('>' + ref_list[i]):
+                    unmodified_contig_sequences.append(str(next(original_fasta, '').strip()))
+
+    new_fasta_name = 'improved_'+ rep_mag + '_using_' + other_input #makes improved_rep_using_other.fa
+    with open(new_fasta_name, 'w') as new_fasta:
+        for i in range(len(new_contig_names)):
+            new_fasta.write('>' + new_contig_names[i] + '\n' + new_contig_sequences[i] + '\n')
+        for i in range(len(unmodified_contig_names)):
+            new_fasta.write('>' + unmodified_contig_names[i]+ '\n' + unmodified_contig_sequences[i] + '\n' )  # write unused contigs -- all contigs in the original reference minus those in the ref_list
+
+    return new_fasta_name #this is a new fasta for each mag x ref improvement -- must be assigned to ref_mag position
+
 
