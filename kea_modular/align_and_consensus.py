@@ -1,7 +1,7 @@
 from Bio import SeqIO
 import os
 
-def consensus_maker(final_nucmer, mag, rep_mag, x):
+def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
 
     #make nucmer outputs into dictionary with just contig names and what they align to
     global c1, c2, c1s1, c1e1, c1s2, c1e2, c2s, c2e, c3s, c3e, c1_1
@@ -132,6 +132,17 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
         for i in range(len(unmodified_contig_names)):
             new_fasta.write('>' + unmodified_contig_names[i]+ '\n' + unmodified_contig_sequences[i] + '\n')  # write unused contigs -- all contigs in the original reference minus those in the ref_list
 
-    return new_fasta_name #this is a new fasta for each mag x ref improvement -- must be assigned to ref_mag position
+
+    #adding new contig lengths to contig_dict
+    improved_contig_dict = {}
+    for cont in new_contig_names:
+        index = new_contig_names.index(cont)
+        length = len(new_contig_sequences[index])
+        improved_contig_dict[cont]={'Length':length}
+
+    from deepmerge import always_merger
+    contig_dict = always_merger.merge(contig_dict, improved_contig_dict)
+
+    return new_fasta_name, contig_dict #this is a new fasta for each mag x ref improvement -- must be assigned to ref_mag position
 
 

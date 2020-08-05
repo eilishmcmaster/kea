@@ -91,7 +91,9 @@ def nucmer(x, cluster_dict, contig_dict):
                     final_nucmer = remove_dupes(filtered_nucmer)
                     print(final_nucmer)
                     if not final_nucmer.empty:
-                        rep_mag = consensus_maker(final_nucmer, mag, rep_mag,x)
+                        results = consensus_maker(final_nucmer, mag, rep_mag,x, contig_dict)
+                        rep_mag = results[0]
+                        contig_dict = results[1]
 
 
         os.chdir('../')
