@@ -81,16 +81,17 @@ def nucmer(x, cluster_dict, contig_dict):
             nucmer_array = nucmer_interpreter(rep_mag, mag)
             print(datetime.now(), 'Nucmer array:')
             print(nucmer_array)
+            if not nucmer_array.empty:
+                print(datetime.now(), 'Removing non-end alignments')
+                filtered_nucmer = gap_overlap(nucmer_array,contig_dict)
+                print(datetime.now(), 'Filtered nucmer array:')
+                print(filtered_nucmer)
+                if not filtered_nucmer.empty:
+                    print(datetime.now(), 'Removing duplicates >2')
+                    final_nucmer = remove_dupes(filtered_nucmer)
+                    print(final_nucmer)
+                    if not final_nucmer.empty:
+                        rep_mag = consensus_maker(final_nucmer, mag, rep_mag,x)
 
-            print(datetime.now(), 'Removing non-end alignments')
-            filtered_nucmer = gap_overlap(nucmer_array,contig_dict)
-            print(datetime.now(), 'Filtered nucmer array:')
-            print(filtered_nucmer)
-
-            print(datetime.now(), 'Removing duplicates >2')
-            final_nucmer = remove_dupes(filtered_nucmer)
-            print(final_nucmer)
-
-            rep_mag = consensus_maker(final_nucmer, mag, rep_mag,x)
 
         os.chdir('../')

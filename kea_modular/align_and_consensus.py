@@ -27,7 +27,6 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
                 dict[key].append(value)
                 break
 
-    print('dict: ', dict)
     #this list has all of the 'other' contig names but without the duplicates
     #will use for referring to dictionary
     new_other_list = []
@@ -119,17 +118,19 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
     import re
     string = open(ref_input, 'r').read()
     for i in range(len(unmodified_contig_names)):
-        m = re.findall('>' + unmodified_contig_names[i] + '\n(.*?)>', string, re.DOTALL)
+        m = re.findall('>' + unmodified_contig_names[i] + '\n(.*?)\n>', string, re.DOTALL)
         m = str(m).strip("[]").strip('\'')
         unmodified_contig_sequences.append(m)
+    unmodified_contig_sequences = [s.replace('\\n', '') for s in unmodified_contig_sequences]
 
     #make new fasta and write to it
     new_fasta_name = 'improved_'+ rep_mag + '_using_' + mag #makes improved_rep_using_other
-    with open(new_fasta_name, 'w') as new_fasta:
+    new_fasta_name_x = new_fasta_name + '.' + x
+    with open(new_fasta_name_x, 'w') as new_fasta:
         for i in range(len(new_contig_names)):
-            new_fasta.write('>' + new_contig_names[i] + '\n' + new_contig_sequences[i] + '\n')
+            new_fasta.write(str('>' + new_contig_names[i] + '\n' + new_contig_sequences[i] + '\n'))
         for i in range(len(unmodified_contig_names)):
-            new_fasta.write('>' + unmodified_contig_names[i]+ '\n' + unmodified_contig_sequences[i])  # write unused contigs -- all contigs in the original reference minus those in the ref_list
+            new_fasta.write('>' + unmodified_contig_names[i]+ '\n' + unmodified_contig_sequences[i] + '\n')  # write unused contigs -- all contigs in the original reference minus those in the ref_list
 
     return new_fasta_name #this is a new fasta for each mag x ref improvement -- must be assigned to ref_mag position
 
