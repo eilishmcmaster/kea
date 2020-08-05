@@ -1,10 +1,10 @@
 import pandas as pd
 import json, subprocess, os
 import numpy as np
-from kea_modular.nucmer_interpreter import nucmer_interpreter
-from kea_modular.selecting_gap_overlaps import gap_overlap
-from kea_modular.remove_duplicates import remove_dupes
-from kea_modular.align_and_consensus import consensus_maker
+from nucmer_interpreter import nucmer_interpreter
+from selecting_gap_overlaps import gap_overlap
+from remove_duplicates import remove_dupes
+from align_and_consensus import consensus_maker
 from datetime import datetime
 
 def nucmer(x, cluster_dict, contig_dict):
@@ -47,7 +47,7 @@ def nucmer(x, cluster_dict, contig_dict):
             if row['Completeness'] > checkm_file['Completeness'].mean() + np.std(checkm_file['Completeness']) or row['Completeness'] < checkm_file['Completeness'].mean() - np.std(checkm_file['Completeness']):
                 subprocess.Popen("rm %s/%s.%s" % (cluster, row['Bin Id'], x), shell=True).wait()
                 del combined_checkm[row['Bin Id']]
-                print(datetime.now(), ['Bin Id'] + ' removed due to uncharacteristic completeness (contamination outside 1 standard deviation of the cluster mean)')
+                print(datetime.now(), row['Bin Id'], ' removed due to uncharacteristic completeness (contamination outside 1 standard deviation of the cluster mean)')
 
         full_checkm_dict = {}
         # calculate genome score for each MAG within the cluster
@@ -94,5 +94,3 @@ def nucmer(x, cluster_dict, contig_dict):
             rep_mag = consensus_maker(final_nucmer, mag, rep_mag,x)
 
         os.chdir('../')
-
-

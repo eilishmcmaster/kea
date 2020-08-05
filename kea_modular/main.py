@@ -2,10 +2,10 @@
 
 import click
 
-from kea_modular.input_processing import input_click
-from kea_modular.clustering import clustering
-from kea_modular.nucmer import nucmer
-from kea_modular.contig_lengths import contig_describe
+from input_processing import input_click
+from clustering import clustering
+from nucmer import nucmer
+from contig_lengths import contig_describe
 
 
 @click.command()

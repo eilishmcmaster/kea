@@ -9,7 +9,6 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
     ref_list = []
     for item in bad_ref_list:
         ref_list.append(item[1:])
-    print('ref list before the bs:', ref_list)
     death_list = list(ref_list)
 
     other_list = final_nucmer['other_contig'].to_list()
@@ -28,6 +27,7 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
                 dict[key].append(value)
                 break
 
+    print('dict: ', dict)
     #this list has all of the 'other' contig names but without the duplicates
     #will use for referring to dictionary
     new_other_list = []
@@ -114,25 +114,22 @@ def consensus_maker(final_nucmer, mag, rep_mag, x):
                 all_contigs_list.append(line[1:-1])
     unmodified_contig_names = list(set(all_contigs_list) - set(ref_list))  # this is a list with the contigs to write to the new fasta
     unmodified_contig_sequences = []
-    print('all contigs in original ref:', len(all_contigs_list))
-    print('contigs in unmodified contig list:', len(unmodified_contig_names))
-    print('theoretical number of new contigs: ', len(new_contig_names), ' or ', len(ref_list))
-    print('ref_list:', ref_list)
-    print('death ref list:', death_list)
-    print('unmodded names:',unmodified_contig_names)
 
-    with open(ref_input, 'r') as original_ref:
-        for line in original_ref:
-            for i in range(len(unmodified_contig_names)):
-                if line.startswith('>' + unmodified_contig_names[i]):
-                    unmodified_contig_sequences.append(str(next(original_ref, '').strip()))
+    #writing sequences to a list
+    import re
+    string = open(ref_input, 'r').read()
+    for i in range(len(unmodified_contig_names)):
+        m = re.findall('>' + unmodified_contig_names[i] + '\n(.*?)>', string, re.DOTALL)
+        m = str(m).strip("[]").strip('\'')
+        unmodified_contig_sequences.append(m)
 
-    new_fasta_name = 'improved_'+ rep_mag + '_using_' + other_input #makes improved_rep_using_other.fa
+    #make new fasta and write to it
+    new_fasta_name = 'improved_'+ rep_mag + '_using_' + mag #makes improved_rep_using_other
     with open(new_fasta_name, 'w') as new_fasta:
         for i in range(len(new_contig_names)):
-            new_fasta.write(str('>' + new_contig_names[i] + '\n' + new_contig_sequences[i] + '\n'))
+            new_fasta.write('>' + new_contig_names[i] + '\n' + new_contig_sequences[i] + '\n')
         for i in range(len(unmodified_contig_names)):
-            new_fasta.write('>' + unmodified_contig_names[i]+ '\n' + unmodified_contig_sequences[i] + '\n' )  # write unused contigs -- all contigs in the original reference minus those in the ref_list
+            new_fasta.write('>' + unmodified_contig_names[i]+ '\n' + unmodified_contig_sequences[i])  # write unused contigs -- all contigs in the original reference minus those in the ref_list
 
     return new_fasta_name #this is a new fasta for each mag x ref improvement -- must be assigned to ref_mag position
 
