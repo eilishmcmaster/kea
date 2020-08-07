@@ -85,17 +85,17 @@ def nucmer(x, cluster_dict, contig_dict):
             if not nucmer_array.empty:
                 print(datetime.now(), 'Removing non-end alignments')
                 filtered_nucmer = gap_overlap(nucmer_array,contig_dict)
-                print(datetime.now(), 'Filtered nucmer array:')
-                print(filtered_nucmer)
                 if not filtered_nucmer.empty:
                     print(datetime.now(), 'Removing duplicates >2')
                     final_nucmer = remove_dupes(filtered_nucmer)
-                    print(final_nucmer)
                     if not final_nucmer.empty:
+                        print(datetime.now(), 'Closing ', rep_mag, ' gaps using ', mag)
                         results = consensus_maker(final_nucmer, mag, rep_mag,x, contig_dict)
                         rep_mag = results[0]
                         contig_dict = results[1]
-
+                        print(datetime.now(), 'Improvement complete for this pair')
+            else:
+                print(datetime.now(), 'Array empty after filtering, moving on to next MAG')
 
 
         os.chdir('../')
