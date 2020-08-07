@@ -1,10 +1,10 @@
 from Bio import SeqIO
 import os
 
-def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
+def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict, i ):
 
     #make nucmer outputs into dictionary with just contig names and what they align to
-    global c1, c2, c1s1, c1e1, c1s2, c1e2, c2s, c2e, c3s, c3e, c1_1
+    global c1, c2, c3, c1s1, c1e1, c1s2, c1e2, c2s, c2e, c3s, c3e, c1_1
     bad_ref_list = final_nucmer['ref_contig'].to_list()
     ref_list = []
     for item in bad_ref_list:
@@ -124,7 +124,11 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
     unmodified_contig_sequences = [s.replace('\\n', '') for s in unmodified_contig_sequences]
 
     #make new fasta and write to it
-    new_fasta_name = 'improved_'+ rep_mag + '_using_' + mag #makes improved_rep_using_other
+    if 'improved_' in str(rep_mag):
+        new_fasta_name = rep_mag + '_' + str(i)
+    else:
+        new_fasta_name = 'improved_'+ rep_mag + str(i)  #makes improved_rep_#
+
     new_fasta_name_x = new_fasta_name + '.' + x
     with open(new_fasta_name_x, 'w') as new_fasta:
         for i in range(len(new_contig_names)):
@@ -143,6 +147,8 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
     from deepmerge import always_merger
     contig_dict = always_merger.merge(contig_dict, improved_contig_dict)
 
-    return new_fasta_name, contig_dict #this is a new fasta for each mag x ref improvement -- must be assigned to ref_mag position
+    i= i+1
+
+    return new_fasta_name, contig_dict, i #this is a new fasta for each mag x ref improvement -- must be assigned to ref_mag position
 
 
