@@ -4,7 +4,7 @@ import os
 def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
 
     #make nucmer outputs into dictionary with just contig names and what they align to
-    u1, u2, u3, c1, c2, c3, c1s1, c1e1, c1s2, c1e2, c2s, c2e, c3s, c3e, c1_1, c1_2, c2_1, c3_1 = ""*18
+    u1, u2, u3, c1, c2, c3, c1s1, c1e1, c1s2, c1e2, c2s, c2e, c3s, c3e, c1_1, c1_2, c2_1, c3_1 = [""]*18
     bad_ref_list = final_nucmer['ref_contig'].to_list()
     ref_list = []
     for item in bad_ref_list:
@@ -95,8 +95,7 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
                 consensus_2 = consensus_2 + c1_2[i]
             else:
                 consensus_2 = consensus_2 + 'N'
-        print('u2:', u2)
-        print()
+
         #making the final sequence and adding it to the list
         final = u2 + consensus_1 + u1 + consensus_2 + u3
         new_contig_sequences.append(final)
@@ -112,7 +111,8 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
         for line in original_fasta:
             if '>' in line:
                 all_contigs_list.append(line[1:-1])
-    unmodified_contig_names = list(set(all_contigs_list) - set(ref_list))  # this is a list with the contigs to write to the new fasta
+
+    unmodified_contig_names = [x for x in all_contigs_list if x not in ref_list] # this is a list with the contigs to write to the new fasta
     unmodified_contig_sequences = []
 
     #writing sequences to a list
@@ -122,7 +122,10 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
         m = re.findall('>' + unmodified_contig_names[i] + '\n(.*?)\n>', string, re.DOTALL)
         m = str(m).strip("[]").strip('\'')
         unmodified_contig_sequences.append(m)
+    rec = string.split(unmodified_contig_names[-1])[1]
+    unmodified_contig_sequences.append(rec)
     unmodified_contig_sequences = [s.replace('\\n', '') for s in unmodified_contig_sequences]
+    unmodified_contig_sequences = [s.replace('\n', '') for s in unmodified_contig_sequences]
 
     #make new fasta and write to it
     new_fasta_name = 'improved_'+ rep_mag  #makes improved_rep_#
