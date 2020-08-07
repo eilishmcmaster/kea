@@ -1,10 +1,10 @@
 from Bio import SeqIO
 import os
 
-def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict, i ):
+def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
 
     #make nucmer outputs into dictionary with just contig names and what they align to
-    global c1, c2, c3, c1s1, c1e1, c1s2, c1e2, c2s, c2e, c3s, c3e, c1_1
+    u1, u2, u3, c1, c2, c3, c1s1, c1e1, c1s2, c1e2, c2s, c2e, c3s, c3e, c1_1, c1_2, c2_1, c3_1 = ""*18
     bad_ref_list = final_nucmer['ref_contig'].to_list()
     ref_list = []
     for item in bad_ref_list:
@@ -63,7 +63,7 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict, i ):
                 for rep_fasta in SeqIO.parse(ref_input, 'fasta'):
                     if rep_fasta.id == dict.get(key)[0]:
                         c2 = rep_fasta.seq  # sequence of first 'rep_contig' in value list
-                        c2 = c2[c2s:c2e]  # section aligning with 'other' contig
+                        c2_1 = c2[c2s:c2e]  # section aligning with 'other' contig
                         u2 = c2[:c2s] #unused part of contig 2
             if key == alignment['other_contig'] and dict.get(key)[1] == alignment['ref_contig'][1:]:
                 c1s2 = alignment['mag_start'] #contig 1 start 2 (other contig)
@@ -78,24 +78,25 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict, i ):
                 for rep_fasta in SeqIO.parse(ref_input, 'fasta'):
                     if rep_fasta.id == dict.get(key)[1]:
                         c3 = rep_fasta.seq  # sequence of first 'rep_contig' in value list
-                        c3 = c3[c3s:c3e]  # section aligning with 'other' contig
+                        c3_1 = c3[c3s:c3e]  # section aligning with 'other' contig
                         u3 = c3[c3e:] #unused section of contig 3
 
         #alignment for each key thing and values set in the dictionary
         consensus_1 = ''
-        for i in range(len(c2)):
-            if c1_1[i] == c2[i]:
+        for i in range(len(c2_1)):
+            if c1_1[i] == c2_1[i]:
                 consensus_1 = consensus_1 + c1_1[i]
             else:
                 consensus_1 = consensus_1 + 'N'
 
         consensus_2 = ''
-        for i in range(len(c3)):
-            if c1_2[i] == c3[i]:
+        for i in range(len(c3_1)):
+            if c1_2[i] == c3_1[i]:
                 consensus_2 = consensus_2 + c1_2[i]
             else:
                 consensus_2 = consensus_2 + 'N'
-
+        print('u2:', u2)
+        print()
         #making the final sequence and adding it to the list
         final = u2 + consensus_1 + u1 + consensus_2 + u3
         new_contig_sequences.append(final)
@@ -124,10 +125,7 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict, i ):
     unmodified_contig_sequences = [s.replace('\\n', '') for s in unmodified_contig_sequences]
 
     #make new fasta and write to it
-    if 'improved_' in str(rep_mag):
-        new_fasta_name = rep_mag + '_' + str(i)
-    else:
-        new_fasta_name = 'improved_'+ rep_mag + str(i)  #makes improved_rep_#
+    new_fasta_name = 'improved_'+ rep_mag  #makes improved_rep_#
 
     new_fasta_name_x = new_fasta_name + '.' + x
     with open(new_fasta_name_x, 'w') as new_fasta:
@@ -147,8 +145,7 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict, i ):
     from deepmerge import always_merger
     contig_dict = always_merger.merge(contig_dict, improved_contig_dict)
 
-    i= i+1
 
-    return new_fasta_name, contig_dict, i #this is a new fasta for each mag x ref improvement -- must be assigned to ref_mag position
+    return new_fasta_name, contig_dict#this is a new fasta for each mag x ref improvement -- must be assigned to ref_mag position
 
 

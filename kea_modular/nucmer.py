@@ -70,7 +70,7 @@ def nucmer(x, cluster_dict, contig_dict):
         del sorted_dict[rep_mag]
 
         os.chdir(cluster)
-        i = 1
+
         # use nucmer to compare representative mag to other mags in genome score order
         for mag in sorted_dict:
             subprocess.Popen("nucmer --prefix=%s %s %s --coords" % (rep_mag + '_vs_' + mag, rep_mag + '.' + x, mag + '.' + x), shell=True).wait()
@@ -92,10 +92,10 @@ def nucmer(x, cluster_dict, contig_dict):
                     final_nucmer = remove_dupes(filtered_nucmer)
                     print(final_nucmer)
                     if not final_nucmer.empty:
-                        results = consensus_maker(final_nucmer, mag, rep_mag,x, contig_dict, i)
+                        results = consensus_maker(final_nucmer, mag, rep_mag,x, contig_dict)
                         rep_mag = results[0]
                         contig_dict = results[1]
-                        i = results[2]
+
 
 
         os.chdir('../')
