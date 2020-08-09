@@ -32,5 +32,7 @@ def remove_dupes(filtered_nucmer):
 
     # remove the >2 duplicates form the filtered_nucmer
     filtered_nucmer = filtered_nucmer[~filtered_nucmer['other_contig'].isin(contigs_to_remove2)]
+    #sort so that the dictionary in the next function will work right
+    filtered_nucmer = filtered_nucmer.sort_values('ref_start', ascending=False)
 
     return filtered_nucmer

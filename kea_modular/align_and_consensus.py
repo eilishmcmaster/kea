@@ -122,7 +122,7 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
         m = re.findall('>' + unmodified_contig_names[i] + '\n(.*?)\n>', string, re.DOTALL)
         m = str(m).strip("[]").strip('\'')
         unmodified_contig_sequences.append(m)
-    rec = string.split(unmodified_contig_names[-1])[1]
+    rec = string.split(unmodified_contig_names[-1])[1] #get the last sequence in the file
     unmodified_contig_sequences.append(rec)
     unmodified_contig_sequences = [s.replace('\\n', '') for s in unmodified_contig_sequences]
     unmodified_contig_sequences = [s.replace('\n', '') for s in unmodified_contig_sequences]
@@ -149,6 +149,6 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
     contig_dict = always_merger.merge(contig_dict, improved_contig_dict)
 
 
-    return new_fasta_name, contig_dict#this is a new fasta for each mag x ref improvement -- must be assigned to ref_mag position
+    return new_fasta_name, contig_dict #this is a new fasta for each mag x ref improvement -- must be assigned to ref_mag position
 
 
