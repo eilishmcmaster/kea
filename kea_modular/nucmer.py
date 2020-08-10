@@ -7,7 +7,7 @@ from remove_duplicates import remove_dupes
 from align_and_consensus import consensus_maker
 from datetime import datetime
 
-def nucmer(x, cluster_dict, contig_dict):
+def nucmer(x, cluster_dict, contig_dict, assigned_mag):
     for cluster in cluster_dict:
         print(datetime.now(), ' Making dictionary from checkM output for '+ cluster)
         #make dictionary for checkm.tsv
@@ -64,9 +64,13 @@ def nucmer(x, cluster_dict, contig_dict):
 
 
         # find the highest MAG (individually) and remove it from the dictionary
-        rep_mag = max(full_checkm_dict.items(), key=operator.itemgetter(1))[0]
-        print(datetime.now(), rep_mag + ' has the highest genome score for cluster')
-        print(sorted_dict)
+        if assigned_mag == '':
+            rep_mag = max(full_checkm_dict.items(), key=operator.itemgetter(1))[0]
+            print(datetime.now(), rep_mag + ' has the highest genome score for cluster')
+        else:
+            print(datetime.now(), assigned_mag, ' designated as representative MAG')
+            rep_mag = assigned_mag
+
         del sorted_dict[rep_mag]
 
         os.chdir(cluster)

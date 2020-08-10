@@ -13,12 +13,13 @@ from contig_lengths import contig_describe
 @click.option('--output', '-o', help='Directory for output polished MAG')
 @click.option('-x', default='fa', help='File extension (default: fa)')
 @click.option('-t', default=1, help='Number of threads to use (default: 1)')
+@click.option('--assigned_mag', '-r', default='', help='Assign representative MAG to improve (optional)')
 
-def full_wf(output, input, x, t):
+def full_wf(output, input, x, t, assigned_mag):
     input_click(input, output) #Make output directories, process input files
     cluster_dict = clustering(t,x) #Make OTU clusters of input files with ANI >99%
     contig_dict = contig_describe() #Find the contig lengths of the input MAGs to be used for filtering nucmer output
-    nucmer(x, cluster_dict, contig_dict) #Quality check using CheckM, removing low quality MAGs, running nucmer
+    nucmer(x, cluster_dict, contig_dict, assigned_mag) #Quality check using CheckM, removing low quality MAGs, running nucmer
 
 if __name__ == "__main__":
     full_wf()
