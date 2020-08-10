@@ -55,37 +55,41 @@ def nucmer(x, cluster_dict, contig_dict, assigned_mag):
         for mag, items in combined_checkm.items():
             genome_score = items['Completeness'] - 5 * items['Contamination'] - 5 * (items['# contigs'] / 100) - 5 * (items['# ambiguous bases'] / 10000)
             combined_checkm[mag]['Genome score'] = genome_score
-            print(mag, ' genome score: ', items['Genome score'])
             full_checkm_dict[mag] = items['Genome score']
 
         # sort MAGs by genome score
         import operator
         sorted_dict = dict(sorted(full_checkm_dict.items(), key=operator.itemgetter(1), reverse=True))
 
-
+        #determining if assigned mag is in cluster
+        in_cluster = False
+        for key, item in sorted_dict.items():
+            if key == assigned_mag:
+                in_cluster = True
+                print(datetime.now(), 'Assigned MAG is in cluster ', cluster)
         # find the highest MAG (individually) and remove it from the dictionary
-        if assigned_mag == '':
+        if assigned_mag == '' or in_cluster == False:
+            print(datetime.now(), 'Representative MAG not assigned, or not found in ', cluster)
             rep_mag = max(full_checkm_dict.items(), key=operator.itemgetter(1))[0]
             print(datetime.now(), rep_mag + ' has the highest genome score for cluster')
         else:
             print(datetime.now(), assigned_mag, ' designated as representative MAG')
             rep_mag = assigned_mag
 
-        del sorted_dict[rep_mag]
+        if rep_mag in sorted_dict:
+            del sorted_dict[rep_mag]
 
         os.chdir(cluster)
 
         # use nucmer to compare representative mag to other mags in genome score order
         for mag in sorted_dict:
-            subprocess.Popen("nucmer --prefix=%s %s %s --coords" % (rep_mag + '_vs_' + mag, rep_mag + '.' + x, mag + '.' + x), shell=True).wait()
+            subprocess.Popen("nucmer --prefix=%s %s %s --coords -q" % (rep_mag + '_vs_' + mag, rep_mag + '.' + x, mag + '.' + x), shell=True).wait()
             print(datetime.now(), rep_mag + ' aligned with ' + mag + ' in ' + cluster)
             subprocess.Popen('rm *delta', shell=True).wait()
 
             #nucmer array is the polished nucmer output with matches >100bp and identity >97% of rep mag vs other mag
             print(datetime.now(), 'Interpreting nucmer output')
             nucmer_array = nucmer_interpreter(rep_mag, mag)
-            print(datetime.now(), 'Nucmer array:')
-            print(nucmer_array)
             if not nucmer_array.empty:
                 print(datetime.now(), 'Removing non-end alignments')
                 filtered_nucmer = gap_overlap(nucmer_array,contig_dict)
