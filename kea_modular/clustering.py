@@ -32,12 +32,19 @@ def clustering(t,x):
         if os.path.exists(cluster):
             print(datetime.now(), 'Cluster directory already exists')
         else:
-            subprocess.Popen("mkdir %s" % cluster, shell=True).wait()
-            genomes = cluster_dict[cluster]
-            for genome in genomes:
-                subprocess.Popen("ln -s %s %s/" % (genome, cluster), shell=True).wait()
-            # running checkm on each cluster
-            print(datetime.now(), 'Quality check initated on  ' + str(cluster))
-            subprocess.Popen("checkm lineage_wf %s %s/checkm --reduced_tree --tab_table -t %d --pplacer_threads %d -x %s -q > %s/checkm.tsv" % (cluster, cluster, t, t, x, cluster), shell=True).wait()
+            for key, value in sorted(cluster_dict.items()):
+                if len([item for item in value if item]) >= 2: #make sure that there are 2 or more mags in the cluster before running checkm
+                    subprocess.Popen("mkdir %s" % cluster, shell=True).wait()
+                    genomes = cluster_dict[cluster]
+                    for genome in genomes:
+                        subprocess.Popen("ln -s %s %s/" % (genome, cluster), shell=True).wait()
+                    # running checkm on each cluster
+                    print(datetime.now(), 'Quality check initated on  ' + str(cluster))
+                    subprocess.Popen("checkm lineage_wf %s %s/checkm --reduced_tree --tab_table -t %d --pplacer_threads %d -x %s -q > %s/checkm.tsv" % (cluster, cluster, t, t, x, cluster), shell=True).wait()
+                else:
+                    print(datetime.now(), cluster, ' has <2 MAGs, skipping quality check')
+                    cluster_dict.pop(key, None) #removes the cluster from the cluster check
+
+
 
     return cluster_dict

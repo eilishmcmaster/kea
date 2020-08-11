@@ -16,7 +16,7 @@ from contig_lengths import contig_describe
 @click.option('--assigned_mag', '-r', default='', help='Assign representative MAG to improve (optional)')
 
 def full_wf(output, input, x, t, assigned_mag):
-    input_click(input, output) #Make output directories, process input files
+    input_click(input, output, assigned_mag, x) #Make output directories, process input files
     cluster_dict = clustering(t,x) #Make OTU clusters of input files with ANI >99%
     contig_dict = contig_describe() #Find the contig lengths of the input MAGs to be used for filtering nucmer output
     nucmer(x, cluster_dict, contig_dict, assigned_mag) #Quality check using CheckM, removing low quality MAGs, running nucmer

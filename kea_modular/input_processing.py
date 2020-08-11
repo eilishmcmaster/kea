@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-def input_click(input, output):
+def input_click(input, output, assigned_mag, x):
     # Make output directory as specified by --output
     if os.path.exists(output + '/kea_wd'):
         os.chdir(output + '/kea_wd')
@@ -31,3 +31,7 @@ def input_click(input, output):
         fin.close()
         fout.close()
         print(datetime.now(),'File containing list of input files with absolute path created (input_mag_abs_path.tsv)')
+
+    if not os.path.isfile('%s/%s' % (input, str(assigned_mag + '.' + x))):
+        print(datetime.now(), 'Error: Assigned representative is not in input folder')
+

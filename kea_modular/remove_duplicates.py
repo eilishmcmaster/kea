@@ -22,7 +22,6 @@ def remove_dupes(filtered_nucmer):
     # retutrn to a dataframe and set the count column 0 as integers
     df2 = dupes2.reset_index()
     df2[0] = df2[0].astype(int)
-    print('df2:', df2)
     contigs_to_remove2 = []
     for index, info in df2.iterrows():
         if info[0] != 2:
