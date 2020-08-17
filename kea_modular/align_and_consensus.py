@@ -51,35 +51,33 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
     for key in new_other_list:
         for index, alignment in final_nucmer.iterrows():
         #get the starts and ends for splicing the sequences
-            if key == alignment['other_contig'] and dict.get(key)[0] == alignment['ref_contig'][1:]: #this isnt finding anything
+            if key == alignment['other_contig'] and dict.get(key)[0] == alignment['ref_contig'][1:]:
                 c1s1 = int(alignment['mag_start']) #contig 1 start 1 (other contig)
                 c1e1 = int(alignment['mag_end']) #contig 1 end 1
                 c2s = int(alignment['ref_start']) #contig 2 start (first ref contig)
                 c2e = int(alignment['ref_end']) #contig 2 end
-                for other_fasta in SeqIO.parse(other_input, 'fasta'):
-                    if other_fasta.id == key:
-                        c1 = other_fasta.seq  # sequence of the key 'other_contig'
-                        c1_1 = c1[c1s1:c1e1]  # section of contig aligning with ref 1
-                for rep_fasta in SeqIO.parse(ref_input, 'fasta'):
-                    if rep_fasta.id == dict.get(key)[0]:
-                        c2 = rep_fasta.seq  # sequence of first 'rep_contig' in value list
-                        c2_1 = c2[c2s:c2e]  # section aligning with 'other' contig
-                        u2 = c2[:c2s] #unused part of contig 2
             if key == alignment['other_contig'] and dict.get(key)[1] == alignment['ref_contig'][1:]:
                 c1s2 = alignment['mag_start'] #contig 1 start 2 (other contig)
                 c1e2 = alignment['mag_end'] #contig 1 end 2
                 c3s = alignment['ref_start'] #contig 3 end
                 c3e = alignment['ref_end'] #contig 3 end
-                for other_fasta in SeqIO.parse(other_input, 'fasta'):
-                    if other_fasta.id == key:
-                        c1 = other_fasta.seq  # sequence of the key 'other_contig'
-                        c1_2 = c1[c1s2:c1e2]  # section of contig aligning with ref 2
-                        u1 = c1[c1e1:c1s2] #unused section of contig 1
-                for rep_fasta in SeqIO.parse(ref_input, 'fasta'):
-                    if rep_fasta.id == dict.get(key)[1]:
-                        c3 = rep_fasta.seq  # sequence of first 'rep_contig' in value list
-                        c3_1 = c3[c3s:c3e]  # section aligning with 'other' contig
-                        u3 = c3[c3e:] #unused section of contig 3
+
+        for other_fasta in SeqIO.parse(other_input, 'fasta'):
+            if other_fasta.id == key:
+                c1 = other_fasta.seq  # sequence of the key 'other_contig'
+                c1_1 = c1[c1s1:c1e1]  # section of contig aligning with ref 1
+                c1_2 = c1[c1s2:c1e2]  # section of contig aligning with ref 2
+                u1 = c1[c1e1:c1s2] #unused section of contig 1
+
+        for rep_fasta in SeqIO.parse(ref_input, 'fasta'):
+            if rep_fasta.id == dict.get(key)[1]:
+                c3 = rep_fasta.seq  # sequence of first 'rep_contig' in value list
+                c3_1 = c3[c3s:c3e]  # section aligning with 'other' contig
+                u3 = c3[c3e:] #unused section of contig 3
+            if rep_fasta.id == dict.get(key)[0]:
+                c2 = rep_fasta.seq  # sequence of first 'rep_contig' in value list
+                c2_1 = c2[c2s:c2e]  # section aligning with 'other' contig
+                u2 = c2[:c2s]  # unused part of contig 2
 
         #alignment for each key thing and values set in the dictionary
         consensus_1 = ''

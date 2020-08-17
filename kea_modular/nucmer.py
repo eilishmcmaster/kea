@@ -83,7 +83,7 @@ def nucmer(x, cluster_dict, contig_dict, assigned_mag):
 
         # use nucmer to compare representative mag to other mags in genome score order
         for mag in sorted_dict:
-            subprocess.Popen("nucmer --prefix=%s %s %s --coords " % (rep_mag + '_vs_' + mag, rep_mag + '.' + x, mag + '.' + x), shell=True).wait()
+            subprocess.Popen("nucmer --prefix=%s %s %s --coords" % (rep_mag + '_vs_' + mag, rep_mag + '.' + x, mag + '.' + x), shell=True).wait()
             print(datetime.now(), rep_mag + ' aligned with ' + mag + ' in ' + cluster)
             subprocess.Popen('rm *delta', shell=True).wait()
 

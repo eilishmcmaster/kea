@@ -27,7 +27,7 @@ def clustering(t,x):
             cluster_dict[name_dict[key]].add(val)
 
     # making directories for each cluster
-
+    small_clusters = []
     for cluster in cluster_dict:
         if os.path.exists(cluster):
             print(datetime.now(), 'Cluster directory already exists')
@@ -38,13 +38,17 @@ def clustering(t,x):
                     genomes = cluster_dict[cluster]
                     for genome in genomes:
                         subprocess.Popen("ln -s %s %s/" % (genome, cluster), shell=True).wait()
-                    # running checkm on each cluster
-                    print(datetime.now(), 'Quality check initated on  ' + str(cluster))
-                    subprocess.Popen("checkm lineage_wf %s %s/checkm --reduced_tree --tab_table -t %d --pplacer_threads %d -x %s -q > %s/checkm.tsv" % (cluster, cluster, t, t, x, cluster), shell=True).wait()
                 else:
                     print(datetime.now(), cluster, ' has <2 MAGs, skipping quality check')
-                    cluster_dict.pop(key, None) #removes the cluster from the cluster check
+                    small_clusters.append(key)
 
+    for entry in small_clusters:
+        cluster_dict.pop(entry, None) #removes the cluster from the cluster check
 
+    for cluster in cluster_dict:
+    # running checkm on each cluster
+        print(datetime.now(), 'Quality check initated on  ' + str(cluster))
+        subprocess.Popen("checkm lineage_wf %s %s/checkm --reduced_tree --tab_table -t %d --pplacer_threads %d -x %s -q > %s/checkm.tsv" % (cluster, cluster, t, t, x, cluster), shell= True).wait()
 
     return cluster_dict
+
