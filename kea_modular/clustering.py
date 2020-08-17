@@ -46,9 +46,12 @@ def clustering(t,x):
         cluster_dict.pop(entry, None) #removes the cluster from the cluster check
 
     for cluster in cluster_dict:
-    # running checkm on each cluster
-        print(datetime.now(), 'Quality check initated on  ' + str(cluster))
-        subprocess.Popen("checkm lineage_wf %s %s/checkm --reduced_tree --tab_table -t %d --pplacer_threads %d -x %s -q > %s/checkm.tsv" % (cluster, cluster, t, t, x, cluster), shell= True).wait()
+        if not os.path.isfile('%s/checkm.tsv' % cluster):
+            # running checkm on each cluster
+            print(datetime.now(), 'Quality check initated on  ' + str(cluster))
+            subprocess.Popen("checkm lineage_wf %s %s/checkm --reduced_tree --tab_table -t %d --pplacer_threads %d -x %s -q > %s/checkm.tsv" % (cluster, cluster, t, t, x, cluster), shell= True).wait()
+        else:
+            print(datetime.now(), cluster, ' quality check already exists')
 
     return cluster_dict
 
