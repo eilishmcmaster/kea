@@ -1,5 +1,5 @@
 from Bio import SeqIO
-import datetime
+from datetime import datetime
 
 #.......................................................................................................................
 

@@ -34,5 +34,5 @@ def input_click(input, output, assigned_mag, x):
         print(datetime.now(),'File containing list of input files with absolute path created (input_mag_abs_path.tsv)')
 
     if not os.path.isfile('%s/%s' % (input, str(assigned_mag + '.' + x))):
-        print(datetime.now(), 'Error: Assigned representative is not in input folder')
+        print(datetime.now(), 'Warning: Assigned representative is not in input folder')
 

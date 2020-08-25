@@ -1,7 +1,7 @@
 
 import os
 from align_scenarios import scenario_1, scenario_2
-import datetime
+from datetime import datetime
 
 def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
 
@@ -95,8 +95,9 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
         m = re.findall('>' + unmodified_contig_names[i] + '\n(.*?)\n>', string, re.DOTALL)
         m = str(m).strip("[]").strip('\'')
         unmodified_contig_sequences.append(m)
-    rec = string.split(unmodified_contig_names[-1])[1] #get the last sequence in the file
-    unmodified_contig_sequences.append(rec)
+    del unmodified_contig_sequences[-1]
+    rec = string.split(unmodified_contig_names[-1])[-1] #get the last sequence in the file
+    unmodified_contig_sequences.append(str(rec))
     unmodified_contig_sequences = [s.replace('\\n', '') for s in unmodified_contig_sequences]
     unmodified_contig_sequences = [s.replace('\n', '') for s in unmodified_contig_sequences]
 
