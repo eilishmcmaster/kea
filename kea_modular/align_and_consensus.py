@@ -1,6 +1,6 @@
 
 import os
-from align_scenarios import scenario_1, scenario_2
+from align_scenarios import scenario_1, scenario_2, datetime
 
 def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
 
@@ -64,8 +64,10 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
                 c3e = int(alignment['ref_end']) #contig 3 end
 
         if c1e1<c1s2: #simple, reference contigs dont overlap
+            print(datetime.now(), 'Simple alignment initiated (scenario 1)')
             final = scenario_1(other_input, ref_input, c1s1,c1e1,c1s2,c1e2,c3s,c3e,c2s,c2e,key,dict)
         elif c1e1>c1s2: #references overlap
+            print(datetime.now(), 'Overlapping contig alignment initiated (scenario 2)')
             final = scenario_2(other_input, ref_input, c1s1,c1e1,c1s2,c1e2,c3s,c3e,c2s,c2e,key,dict)
 
         new_contig_sequences.append(final)
