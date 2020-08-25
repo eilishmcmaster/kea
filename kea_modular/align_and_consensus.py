@@ -1,6 +1,7 @@
 
 import os
-from align_scenarios import scenario_1, scenario_2, datetime
+from align_scenarios import scenario_1, scenario_2
+import datetime
 
 def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
 
