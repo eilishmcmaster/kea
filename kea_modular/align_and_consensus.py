@@ -1,4 +1,3 @@
-
 import os
 from align_scenarios import scenario_1, scenario_2
 from datetime import datetime
@@ -11,7 +10,6 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
     ref_list = []
     for item in bad_ref_list:
         ref_list.append(item[1:])
-    death_list = list(ref_list)
 
     other_list = final_nucmer['other_contig'].to_list()
     #makes dictionary that looks like {'other': ['ref_1', 'ref_2']} == {'NODE_2767_length_14969_cov_5.423897': ['NODE_1302_length_24101_cov_6.015013', 'NODE_1392_length_23076_cov_6.991834']}
@@ -19,15 +17,13 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
     new_contig_names = []
     new_contig_sequences = []
 
-    for key in other_list:
-        for value in death_list:
-            if key not in dict:
-                dict[key]=[value]
-                death_list.remove(value)
-                break
-            else:
-                dict[key].append(value)
-                break
+    for i in range(len(other_list)):
+        key = other_list[i]
+        value = ref_list[i]
+        if key not in dict:
+            dict[key]=[value]
+        else:
+            dict[key].append(value)
 
     #this list has all of the 'other' contig names but without the duplicates
     #will use for referring to dictionary
@@ -124,5 +120,3 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
 
 
     return new_fasta_name, contig_dict #this is a new fasta for each mag x ref improvement -- must be assigned to ref_mag position
-
-
