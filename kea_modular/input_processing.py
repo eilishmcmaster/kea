@@ -37,5 +37,5 @@ def input_click(input, output, assigned_mag, x):
         print(datetime.now(), 'Warning: Assigned representative is not in input folder')
 
     with open('log.tsv', 'w') as stupid:
-        stupid.write('fuck you\t')
+        stupid.write('r_mag\tc1\tc2\to_mag\tc3\tnew_contig\tnew_mag\n')
 

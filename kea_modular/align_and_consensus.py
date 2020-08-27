@@ -99,6 +99,8 @@ def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
 
     #make new fasta and write to it
     new_fasta_name = 'improved_'+ rep_mag  #makes improved_rep_#
+    with open('../log.tsv', 'a') as stupid:
+        stupid.write(new_contig_name + '\t' + new_fasta_name + '\n')
 
     new_fasta_name_x = new_fasta_name + '.' + x
     with open(new_fasta_name_x, 'w') as new_fasta:
