@@ -10,7 +10,9 @@ from datetime import datetime
 #                                       contig 1 (other) (key)
 
 def scenario_1(other_input, ref_input, c1s1,c1e1,c1s2,c1e2,c3s,c3e,c2s,c2e,key,dict):
-    contig1, contig2, contig3 == [""]*3
+    contig1 = ''
+    contig2 = ''
+    contig3 = ''
     for other_fasta in SeqIO.parse(other_input, 'fasta'):
         if other_fasta.id == key:
             print(datetime.now(), 'Closing gap using other contig ', key)
@@ -53,7 +55,7 @@ def scenario_1(other_input, ref_input, c1s1,c1e1,c1s2,c1e2,c3s,c3e,c2s,c2e,key,d
     final = u2 + consensus_1 + u1 + consensus_2 + u3
 
     with open('../log.tsv', 'a') as stupid:
-        stupid.write(ref_input + '\t' + contig1 + '\t' + contig2 + '\t'+ other_input +'\t'+ contig3 + '\t')
+        stupid.write(ref_input + '\t' + contig1 + '\t' + contig2 + '\t'+ other_input +'\t'+ contig3 + '\tscenario_1\t')
 
     return final
 
@@ -67,6 +69,9 @@ def scenario_1(other_input, ref_input, c1s1,c1e1,c1s2,c1e2,c3s,c3e,c2s,c2e,key,d
 #                               contig 1 (other) (key)
 
 def scenario_2(other_input, ref_input, c1s1,c1e1,c1s2,c1e2,c3s,c3e,c2s,c2e,key,dict):
+    contig1 = ''
+    contig2 = ''
+    contig3 = ''
     for other_fasta in SeqIO.parse(other_input, 'fasta'):
         if other_fasta.id == key:
             print(datetime.now(), 'Closing gap using other contig ', key)
@@ -74,6 +79,7 @@ def scenario_2(other_input, ref_input, c1s1,c1e1,c1s2,c1e2,c3s,c3e,c2s,c2e,key,d
             c1_1 = c1[c1s1:c1s2]  # section of contig aligning with ref 1
             c1_2 = c1[c1s2:c1e1]  # section of contig aligning with ref 2
             c1_3 = c1[c1e1:c1e2]  # unused section of contig 1
+            contig3 = key
 
     for rep_fasta in SeqIO.parse(ref_input, 'fasta'):
         if rep_fasta.id == dict.get(key)[1]:
@@ -82,12 +88,14 @@ def scenario_2(other_input, ref_input, c1s1,c1e1,c1s2,c1e2,c3s,c3e,c2s,c2e,key,d
             c3_1 = c3[c3s:(c3s+c1e1-c1s2)]  # section aligning with 'other' contig
             c3_2 = c3[(c3s+c1e1-c1s2):c3e]  # unused section of contig 3
             u2 = c3[c3s:]
+            contig2 = dict.get(key)[1]
         if rep_fasta.id == dict.get(key)[0]:
             print(datetime.now(), 'Reference contig 2: ', dict.get(key)[0])
             c2 = rep_fasta.seq  # sequence of first 'rep_contig' in value list
             c2_1 = c2[c2s:(c2s+c1s2-c1s1)]  # section aligning with 'other' contig
             c2_2 = c2[(c2s+c1s2-c1s1):c2e]  # unused part of contig 2
             u1 = c2[:c2s]
+            contig1 = dict.get(key)[0]
 
     consensus_1 = ''
     for i in range(len(c2_1)):
@@ -117,5 +125,5 @@ def scenario_2(other_input, ref_input, c1s1,c1e1,c1s2,c1e2,c3s,c3e,c2s,c2e,key,d
 
     final = u1 + consensus_1 + consensus_2 + consensus_3 + u2
     with open('../log.tsv', 'a') as stupid:
-        stupid.write('fuck you as well \n')
+        stupid.write(ref_input + '\t' + contig1 + '\t' + contig2 + '\t'+ other_input +'\t'+ contig3 + '\tscenario_2\t')
     return final
