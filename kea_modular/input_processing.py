@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 def input_click(input, output, assigned_mag, x):
-
+    #git makes me want to kill
     # Make output directory as specified by --output
     if os.path.exists(output + '/kea_wd'):
         os.chdir(output + '/kea_wd')

@@ -3,7 +3,7 @@ from align_scenarios import scenario_1, scenario_2
 from datetime import datetime
 
 def consensus_maker(final_nucmer, mag, rep_mag, x, contig_dict):
-
+    #grrrr
     #make nucmer outputs into dictionary with just contig names and what they align to
     u1, u2, u3, c1, c2, c3, c1s1, c1e1, c1s2, c1e2, c2s, c2e, c3s, c3e, c1_1, c1_2, c2_1, c3_1 = [""]*18
     bad_ref_list = final_nucmer['ref_contig'].to_list()
