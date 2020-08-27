@@ -48,7 +48,10 @@ def scenario_1(other_input, ref_input, c1s1,c1e1,c1s2,c1e2,c3s,c3e,c2s,c2e,key,d
     # making the final sequence and adding it to the list
     final = u2 + consensus_1 + u1 + consensus_2 + u3
 
+    with open('../log.tsv', 'a') as stupid:
+        stupid.write('fuck you too \n')
     return final
+
 
 #.......................................................................................................................
 
@@ -108,4 +111,6 @@ def scenario_2(other_input, ref_input, c1s1,c1e1,c1s2,c1e2,c3s,c3e,c2s,c2e,key,d
             consensus_2 = consensus_2 + 'N'
 
     final = u1 + consensus_1 + consensus_2 + consensus_3 + u2
+    with open('../log.tsv', 'a') as stupid:
+        stupid.write('fuck you as well \n')
     return final
