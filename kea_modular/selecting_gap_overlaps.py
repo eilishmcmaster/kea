@@ -22,4 +22,14 @@ def gap_overlap(nucmer_array, contig_dict):
 
     new_array = pd.DataFrame(nucmer_filtered_list, columns=col_names)
     new_array = new_array[new_array.duplicated(subset=['other_contig'], keep=False)]
+
+    start_end_dict = {}
+    for index, alignment in new_array.iterrows():
+        if int(alignment['mag_start'])>=200:
+            start_end_dict.update({str(alignment['ref_contig']):0}) #match is start of ref contig =0
+        else:
+            start_end_dict.update({str(alignment['ref_contig']):1}) #match is at end of ref contig = 1
+
+    print('start end dict: ', start_end_dict)
+
     return new_array
