@@ -40,3 +40,16 @@ conda activate kea-env
 ```
 conda install --name kea-env --file /kea/conda_install.txt
 ```
+All the prerequisite packages should now be installed. 
+
+## Using Kea 
+
+To use Kea, you must have multiple MAGs of the same OTU (>99% ANI). If you have multiple different OTUs you would like to run Kea on, Kea can sort them automatically. The input is the directory containing the MAGs. 
+
+Input format: 
+
+```
+python kea/kea_modular/main.py -i input_directory/ -o output_directory -x fa -r reference.fa -t 50
+```
+
+The `x` flag is used to specify the input file extension (fa or fasta), `t` is to specify the number of threads to use, and `r` is for specifying the reference MAG (optional). The output file will be created if it does not exist. 
