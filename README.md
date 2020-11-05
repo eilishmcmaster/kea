@@ -38,3 +38,5 @@ conda activate kea-env
 3. Install the prerequisite packages into the environment
 
 ```
+conda install --name kea-env --file /kea/conda_install.txt
+```
